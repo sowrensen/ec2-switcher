@@ -36,12 +36,17 @@ class EC2:
 
         state = ''
         for instance in response['Reservations'][0]['Instances']:
-            state += f"{instance['InstanceId']} - {instance['State']['Name']}"
+            instanceId = instance['InstanceId']
+            status = instance['State']['Name']
+            # Safely retrieve the public ip
+            publicIp = instance.get('NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
+            state += f"{instanceId} - {status} - {publicIp}"
 
         return state
 
     def get_state_and_ip(self, instance) -> (str, str):
         response = self.get_state(instance, full=True)
         state = response['Reservations'][0]['Instances'][0]['State']['Name']
-        publicIp = response['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
+        # Safely retrieve the public ip
+        publicIp = instance.get('NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
         return state, publicIp
