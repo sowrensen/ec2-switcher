@@ -1,4 +1,5 @@
 import boto3
+import pprint
 
 
 class EC2:
@@ -24,9 +25,23 @@ class EC2:
         response = self.client.stop_instances(InstanceIds=[instance])
         return response['StoppingInstances'][0]['CurrentState']['Name']
 
-    def get_state(self, instance: str) -> str:
+    def get_state(self, instance: str, verbose: bool = False, full: bool = False) -> str|dict:
         response = self.client.describe_instances(InstanceIds=[instance])
-        # states = ''
-        # for instance in response['Reservations'][0]['Instances']:
-        #     states += f"{instance['InstanceId']} - {instance['State']['Name']}"
-        return response['Reservations'][0]['Instances'][0]['State']['Name']
+
+        if full:
+            return response
+
+        if not verbose:
+            return response['Reservations'][0]['Instances'][0]['State']['Name']
+
+        state = ''
+        for instance in response['Reservations'][0]['Instances']:
+            state += f"{instance['InstanceId']} - {instance['State']['Name']}"
+
+        return state
+
+    def get_state_and_ip(self, instance) -> (str, str):
+        response = self.get_state(instance, full=True)
+        state = response['Reservations'][0]['Instances'][0]['State']['Name']
+        publicIp = response['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
+        return state, publicIp

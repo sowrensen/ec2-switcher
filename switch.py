@@ -48,16 +48,19 @@ if args.start:
     while response != 'running':
         time.sleep(5)
         response = client.get_state(instance)
+    response, publicIp = client.get_state_and_ip(instance)
+    print(f"🟢 {response} - {publicIp}")
 elif args.stop:
     response = client.stop_instance(instance)
     print("stopping, please wait...")
     while response != 'stopped':
         time.sleep(5)
         response = client.get_state(instance)
+    print(f"🔴 {response}")
 elif args.state:
-    response = client.get_state(instance)
+    response = client.get_state(instance, verbose=True)
+    print(f"🔵 {response}")
+
 else:
     print("Invalid option")
     exit(1)
-
-print(f"✅ {response}")
