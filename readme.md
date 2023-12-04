@@ -34,15 +34,15 @@ We will perform our operations using the `switch.py` file. You can run `python s
 The CLI structure is like following:
 
 ```
-python switch.py [instances ...] (--start | --stop | --state)
+python switch.py [instance] (--start | --stop | --state)
 ```
 
-Here you can pass multiple instance ids, _separated by space_, and one action like `--start`, `--stop`, or `--state`.
+Here you can pass the instance id and one of the actions: `--start`, `--stop`, or `--state`.
 
-If you have set `EC2_INSTANCE` key in `.env` file, you can leave the instance ids and instead directly run:
+If you have set `EC2_INSTANCE` key in `.env` file, you can leave the instance id and instead directly run:
 
 ```
 python switch.py (--start | --stop | --state)
 ```
 
-In this case, it will try to read the `instance` from the `.env` file. However, in this way you can set only one instance name.
+In this case, it will try to read the `instance` from the `.env` file. If it did not find anything set in `.env` the program will exit with an error.

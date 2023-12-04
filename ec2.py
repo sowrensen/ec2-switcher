@@ -16,17 +16,17 @@ class EC2:
             region_name=region
         )
 
-    def start_instances(self, instances: list) -> str:
-        response = self.client.start_instances(InstanceIds=instances)
+    def start_instance(self, instance: str) -> str:
+        response = self.client.start_instances(InstanceIds=[instance])
         return response['StartingInstances'][0]['CurrentState']['Name']
 
-    def stop_instances(self, instances: list) -> str:
-        response = self.client.stop_instances(InstanceIds=instances)
+    def stop_instance(self, instance: str) -> str:
+        response = self.client.stop_instances(InstanceIds=[instance])
         return response['StoppingInstances'][0]['CurrentState']['Name']
 
-    def get_states(self, instances: list) -> str:
-        response = self.client.describe_instances(InstanceIds=instances)
-        states = ''
-        for instance in response['Reservations'][0]['Instances']:
-            states += f"{instance['InstanceId']} - {instance['State']['Name']}"
-        return states
+    def get_state(self, instance: str) -> str:
+        response = self.client.describe_instances(InstanceIds=[instance])
+        # states = ''
+        # for instance in response['Reservations'][0]['Instances']:
+        #     states += f"{instance['InstanceId']} - {instance['State']['Name']}"
+        return response['Reservations'][0]['Instances'][0]['State']['Name']
