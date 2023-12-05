@@ -1,5 +1,7 @@
+"""
+A wrapper around boto3 library to perform basic EC2 actions.
+"""
 import boto3
-import pprint
 
 
 class EC2:

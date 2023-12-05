@@ -43,7 +43,8 @@ client = EC2(
     region=AWS_REGION
 )
 
-if args.start:
+
+def handle_start():
     response = client.start_instance(instance_id)
     print("starting, please wait...")
     while response != 'running':
@@ -51,19 +52,30 @@ if args.start:
         response = client.get_state(instance_id)
     response, public_ip = client.get_state_and_ip(instance_id)
     print(f"{get_symbol(response)} {response} - {public_ip}")
-elif args.stop:
+
+
+def handle_stop():
     response = client.stop_instance(instance_id)
     print("stopping, please wait...")
     while response != 'stopped':
         time.sleep(5)
         response = client.get_state(instance_id)
     print(f"{get_symbol(response)} {response}")
-elif args.state:
+
+
+def handle_state():
     response = client.get_state(instance_id, verbose=True)
     # i-05c6f45c74bdf86bc - running - 3.139.93.79, we take the second index value
     symbol = get_symbol(response.split(' - ')[1])
     print(f"{symbol} {response}")
 
+
+if args.start:
+    handle_start()
+elif args.stop:
+    handle_stop()
+elif args.state:
+    handle_state()
 else:
     print("Invalid option")
     exit(1)
