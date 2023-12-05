@@ -25,7 +25,7 @@ class EC2:
         response = self.client.stop_instances(InstanceIds=[instance])
         return response['StoppingInstances'][0]['CurrentState']['Name']
 
-    def get_state(self, instance: str, verbose: bool = False, full: bool = False) -> str|dict:
+    def get_state(self, instance: str, verbose: bool = False, full: bool = False) -> str | dict:
         response = self.client.describe_instances(InstanceIds=[instance])
 
         if full:
@@ -39,7 +39,8 @@ class EC2:
             instanceId = instance['InstanceId']
             status = instance['State']['Name']
             # Safely retrieve the public ip
-            publicIp = instance.get('NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
+            publicIp = instance.get('NetworkInterfaces', [{}])[0].get(
+                'Association', {}).get('PublicIp', 'n/a')
             state += f"{instanceId} - {status} - {publicIp}"
 
         return state
@@ -48,5 +49,6 @@ class EC2:
         response = self.get_state(instance, full=True)
         state = response['Reservations'][0]['Instances'][0]['State']['Name']
         # Safely retrieve the public ip
-        publicIp = instance.get('NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
+        publicIp = response.get('Reservations', [{}])[0].get('Instances', [{}])[0].get(
+            'NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
         return state, publicIp
