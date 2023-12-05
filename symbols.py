@@ -1,5 +1,5 @@
 def get_symbol(response: str) -> str:
-    status_mapping = {
+    symbol_map = {
         'pending': '🟡',
         'stopping': '🟡',
         'shutting-down': '🔴',
@@ -8,4 +8,4 @@ def get_symbol(response: str) -> str:
         'running': '🟢',
     }
 
-    return status_mapping.get(response, '🔵')
+    return symbol_map.get(response, '🔵')

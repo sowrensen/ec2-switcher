@@ -31,9 +31,9 @@ group.add_argument("--state", action='store_true',
 
 args = parser.parse_args()
 
-instance = args.instance
+instance_id = args.instance
 
-if instance is None or instance == '':
+if instance_id is None or instance_id == '':
     print("No instance ID is set, please pass one in CLI or set in .env file")
     exit(1)
 
@@ -44,22 +44,22 @@ client = EC2(
 )
 
 if args.start:
-    response = client.start_instance(instance)
+    response = client.start_instance(instance_id)
     print("starting, please wait...")
     while response != 'running':
         time.sleep(5)
-        response = client.get_state(instance)
-    response, publicIp = client.get_state_and_ip(instance)
-    print(f"{get_symbol(response)} {response} - {publicIp}")
+        response = client.get_state(instance_id)
+    response, public_ip = client.get_state_and_ip(instance_id)
+    print(f"{get_symbol(response)} {response} - {public_ip}")
 elif args.stop:
-    response = client.stop_instance(instance)
+    response = client.stop_instance(instance_id)
     print("stopping, please wait...")
     while response != 'stopped':
         time.sleep(5)
-        response = client.get_state(instance)
+        response = client.get_state(instance_id)
     print(f"{get_symbol(response)} {response}")
 elif args.state:
-    response = client.get_state(instance, verbose=True)
+    response = client.get_state(instance_id, verbose=True)
     # i-05c6f45c74bdf86bc - running - 3.139.93.79, we take the second index value
     symbol = get_symbol(response.split(' - ')[1])
     print(f"{symbol} {response}")

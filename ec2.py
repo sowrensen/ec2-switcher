@@ -17,16 +17,16 @@ class EC2:
             region_name=region
         )
 
-    def start_instance(self, instance: str) -> str:
-        response = self.client.start_instances(InstanceIds=[instance])
+    def start_instance(self, instance_id: str) -> str:
+        response = self.client.start_instances(InstanceIds=[instance_id])
         return response['StartingInstances'][0]['CurrentState']['Name']
 
-    def stop_instance(self, instance: str) -> str:
-        response = self.client.stop_instances(InstanceIds=[instance])
+    def stop_instance(self, instance_id: str) -> str:
+        response = self.client.stop_instances(InstanceIds=[instance_id])
         return response['StoppingInstances'][0]['CurrentState']['Name']
 
-    def get_state(self, instance: str, verbose: bool = False, full: bool = False) -> str | dict:
-        response = self.client.describe_instances(InstanceIds=[instance])
+    def get_state(self, instance_id: str, verbose: bool = False, full: bool = False) -> str | dict:
+        response = self.client.describe_instances(InstanceIds=[instance_id])
 
         if full:
             return response
@@ -36,19 +36,18 @@ class EC2:
 
         state = ''
         for instance in response['Reservations'][0]['Instances']:
-            instanceId = instance['InstanceId']
             status = instance['State']['Name']
             # Safely retrieve the public ip
-            publicIp = instance.get('NetworkInterfaces', [{}])[0].get(
+            public_ip = instance.get('NetworkInterfaces', [{}])[0].get(
                 'Association', {}).get('PublicIp', 'n/a')
-            state += f"{instanceId} - {status} - {publicIp}"
+            state += f"{instance_id} - {status} - {public_ip}"
 
         return state
 
-    def get_state_and_ip(self, instance) -> (str, str):
-        response = self.get_state(instance, full=True)
+    def get_state_and_ip(self, instance_id: str) -> (str, str):
+        response = self.get_state(instance_id, full=True)
         state = response['Reservations'][0]['Instances'][0]['State']['Name']
         # Safely retrieve the public ip
-        publicIp = response.get('Reservations', [{}])[0].get('Instances', [{}])[0].get(
+        public_ip = response.get('Reservations', [{}])[0].get('Instances', [{}])[0].get(
             'NetworkInterfaces', [{}])[0].get('Association', {}).get('PublicIp', 'n/a')
-        return state, publicIp
+        return state, public_ip
