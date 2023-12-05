@@ -4,6 +4,7 @@ import argparse
 from dotenv import load_dotenv
 
 from ec2 import EC2
+from symbols import get_symbol
 
 load_dotenv()
 
@@ -49,17 +50,19 @@ if args.start:
         time.sleep(5)
         response = client.get_state(instance)
     response, publicIp = client.get_state_and_ip(instance)
-    print(f"🟢 {response} - {publicIp}")
+    print(f"{get_symbol(response)} {response} - {publicIp}")
 elif args.stop:
     response = client.stop_instance(instance)
     print("stopping, please wait...")
     while response != 'stopped':
         time.sleep(5)
         response = client.get_state(instance)
-    print(f"🔴 {response}")
+    print(f"{get_symbol(response)} {response}")
 elif args.state:
     response = client.get_state(instance, verbose=True)
-    print(f"🔵 {response}")
+    # i-05c6f45c74bdf86bc - running - 3.139.93.79, we take the second index value
+    symbol = get_symbol(response.split(' - ')[1])
+    print(f"{symbol} {response}")
 
 else:
     print("Invalid option")
